@@ -1,0 +1,8 @@
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <base-config>
+            <certificates src="system" />
+            <certificates src="user" />
+        </base-config>
+    </base-config>
+</network-security-config>

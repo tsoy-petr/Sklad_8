@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Sklad_8</string>
+
+    <string name="title_tab_goods">Номенклатура</string>
+    <string name="title_tab_sync">Синхронизация</string>
+    <string name="title_tab_settings">Настройки</string>
+
+</resources>
