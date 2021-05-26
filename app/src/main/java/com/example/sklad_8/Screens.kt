@@ -1,7 +1,7 @@
 package com.example.sklad_8
 
 import com.example.sklad_8.ui.goods.GoodsFragment
-import com.example.sklad_8.fragments.SettingsFragment
+import com.example.sklad_8.ui.settings.SettingsFragment
 import com.example.sklad_8.ui.sync.SyncFragment
 import com.github.terrakok.modo.android.AppScreen
 import com.github.terrakok.modo.android.MultiAppScreen

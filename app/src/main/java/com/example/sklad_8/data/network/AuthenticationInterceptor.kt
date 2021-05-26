@@ -6,11 +6,13 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-class AuthenticationInterceptor(): Interceptor {
+class AuthenticationInterceptor(
+    private val prefs: SharedPrefsManager
+): Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        val authToken = Credentials.basic("001", "001");
+        val authToken = Credentials.basic(prefs.getLogin(), prefs.getPass());
 
         val original: Request = chain.request()
         val builder: Request.Builder = original.newBuilder()

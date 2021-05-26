@@ -3,6 +3,7 @@ package com.example.sklad_8.data.network
 import com.example.sklad_8.data.network.responses.InfoAtPackegs
 import com.example.sklad_8.data.network.responses.SyncPackagesDescriptionsResponse
 import com.example.sklad_8.data.network.responses.SyncPackagesResponse
+import com.example.sklad_8.data.repositores.data.PartDataGoods
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
@@ -31,11 +32,11 @@ interface ApiService {
     ): Response<InfoAtPackegs>
 
     @GET(PRODUCTS)
-    suspend fun getPortion(
-        @Query("getPortion") operation: String,
+    suspend fun getPortionGoods(
+        @Query("operation") operation: String,
         @Query("portionsId") portionsId: String,
-        @Query("numberPortion") numberPortion: String,
+        @Query("numberPortion") numberPortion: Int,
         @Query("dataType") dataType: String
-    ): Response<InfoAtPackegs>
+    ): Response<PartDataGoods>
 
 }

@@ -10,8 +10,10 @@ import com.example.sklad_8.data.network.HostSelectionInterceptor
 import com.example.sklad_8.data.network.NetworkConnectionInterceptor
 import com.example.sklad_8.data.prefs.SharedPrefsManager
 import com.example.sklad_8.data.repositores.GoodsRepository
+import com.example.sklad_8.data.repositores.SettingsRepository
 import com.example.sklad_8.data.repositores.SyncRepository
 import com.example.sklad_8.ui.goods.GoodsViewModel
+import com.example.sklad_8.ui.settings.ServerSettingsViewModel
 import com.example.sklad_8.ui.sync.SyncViewModel
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -51,8 +53,9 @@ val applicationModule = module {
         SkladDatabase.getInstance(androidContext())
     }
 
-    single { SyncRepository(api = get(named(RETROFIT_TAG)), db = get()) }
+    single { SyncRepository(api = get(named(RETROFIT_TAG)), db = get(), context = androidContext()) }
     single { GoodsRepository(db = get()) }
+    single { SettingsRepository(prefs = get()) }
 }
 
 val networkModule = module {
@@ -88,26 +91,13 @@ val networkModule = module {
 
     single(named(RETROFIT_TAG)) {
         val okkHttpclient = OkHttpClient.Builder()
-//            .addInterceptor(get(named(NETWORK_CONNECTION_INTERCEPTOR_TAG)) as NetworkConnectionInterceptor)
-//            .addInterceptor(HttpLoggingInterceptor().also {
-//                it.setLevel(HttpLoggingInterceptor.Level.BODY)
-//            })
-            .addInterceptor(AuthenticationInterceptor())
+            .addInterceptor(AuthenticationInterceptor(get()))
             .build()
-        val json = Json {
-            prettyPrint = true
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        }
-        val contentType = "application/json".toMediaType()
 
         Retrofit.Builder()
-//            .baseUrl("http://192.168.1.46:8000")
             .baseUrl("http://91.225.192.41:55555")
-//            .client(get(named(OK_HTTP_CLIENT_TAG)))
             .client(okkHttpclient)
             .addConverterFactory(GsonConverterFactory.create())
-//            .addConverterFactory(json.asConverterFactory(contentType))
             .build()
             .create(ApiService::class.java)
     }
@@ -118,5 +108,5 @@ val viewModelModule = module {
 
     viewModel { SyncViewModel(repository = get()) }
     viewModel { GoodsViewModel(goodsRepository = get()) }
-
+    viewModel { ServerSettingsViewModel(repository = get()) }
 }

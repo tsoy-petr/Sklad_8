@@ -15,5 +15,7 @@ data class GoodEntity(
     val isGroup: Boolean = false,
     val name: String,
     @SerializedName("article_number")
-    val vendorCode: String
+    val vendorCode: String,
+    val imgMain: String,
+    val deletionMark: Boolean
 )

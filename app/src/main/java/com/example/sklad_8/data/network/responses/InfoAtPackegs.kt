@@ -1,8 +1,10 @@
 package com.example.sklad_8.data.network.responses
 
+import com.example.sklad_8.data.repositores.data.Errors
+
 class InfoAtPackegs(
     val result: List<ResultsInfoAtPackegs>?,
-    val errors: ErrorResponseData
+    val errors: Errors
 )
 
 class ResultsInfoAtPackegs(
@@ -15,7 +17,3 @@ class Portion(
     val dataType: String
 )
 
-class ErrorResponseData(
-    val exist: Boolean,
-    val title: String
-)

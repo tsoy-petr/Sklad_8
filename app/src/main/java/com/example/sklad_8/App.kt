@@ -11,12 +11,20 @@ import com.github.terrakok.modo.android.LogReducer
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import timber.log.Timber.DebugTree
+
+import timber.log.Timber
+
+
+
 
 class App : Application() {
 
     override fun onCreate() {
         modo = Modo(LogReducer(AppReducer(this, MultiReducer())))
         super.onCreate()
+
+        Timber.plant(DebugTree())
 
         startKoin {
             androidLogger()
