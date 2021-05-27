@@ -1,12 +1,22 @@
 package com.example.sklad_8.data.repositores
 
+import android.content.Context
 import com.example.sklad_8.data.db.SkladDatabase
+import com.example.sklad_8.data.db.entities.GoodEntity
 import com.example.sklad_8.data.mappers.toUI
 import com.example.sklad_8.data.mappers.toUi
 import com.example.sklad_8.data.network.SafeApiRequest
 import com.example.sklad_8.ui.goods.GoodViewData
+import java.io.File
+import android.graphics.BitmapFactory
+
+import android.graphics.Bitmap
+
+
+
 
 class GoodsRepository(
+    private val context: Context,
     private val db: SkladDatabase
 ) : SafeApiRequest() {
 
@@ -46,7 +56,19 @@ class GoodsRepository(
     }
 
 
-    fun fetchGoodParentByUUID(uuidParent: String) =
-        db.goodsDao.getGood(uuidParent)
+    fun fetchGoodParentByUUID(uuidParent: String, withImage: Boolean = false): GoodEntity? {
+        val good = db.goodsDao.getGood(uuidParent)
+        good?.let {
+            if (withImage && good.imgMain.isNotEmpty() == true) {
+                val options = BitmapFactory.Options()
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888
+                val bitmap = BitmapFactory.decodeFile(good.imgMain, options)
+                good.btmImg = bitmap
+                return good
+            }
+        }
+        return good
+    }
+
 
 }

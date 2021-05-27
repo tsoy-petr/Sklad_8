@@ -12,6 +12,7 @@ import com.example.sklad_8.data.prefs.SharedPrefsManager
 import com.example.sklad_8.data.repositores.GoodsRepository
 import com.example.sklad_8.data.repositores.SettingsRepository
 import com.example.sklad_8.data.repositores.SyncRepository
+import com.example.sklad_8.ui.goods.DetailGoodViewModel
 import com.example.sklad_8.ui.goods.GoodsViewModel
 import com.example.sklad_8.ui.settings.ServerSettingsViewModel
 import com.example.sklad_8.ui.sync.SyncViewModel
@@ -54,7 +55,7 @@ val applicationModule = module {
     }
 
     single { SyncRepository(api = get(named(RETROFIT_TAG)), db = get(), context = androidContext()) }
-    single { GoodsRepository(db = get()) }
+    single { GoodsRepository(db = get(), context = androidContext()) }
     single { SettingsRepository(prefs = get()) }
 }
 
@@ -109,4 +110,5 @@ val viewModelModule = module {
     viewModel { SyncViewModel(repository = get()) }
     viewModel { GoodsViewModel(goodsRepository = get()) }
     viewModel { ServerSettingsViewModel(repository = get()) }
+    viewModel { DetailGoodViewModel(repository = get()) }
 }

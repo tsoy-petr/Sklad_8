@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sklad_8.App
 import com.example.sklad_8.R
+import com.example.sklad_8.Screens
+import com.github.terrakok.modo.forward
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -62,6 +64,8 @@ class GoodsFragment : Fragment(R.layout.fragment_goods) {
         goodsAdapter = GoodsAdapter { item, isFirst ->
             if (item.isGroup) {
                     goodsViewModel.fetchGoods(item, isFirst)
+            } else {
+                modo.forward(Screens.DetailGoodScreen(item.id))
             }
         }
         rvGoods.apply {

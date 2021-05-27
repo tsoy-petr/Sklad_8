@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.sklad_8.data.db.entities.GoodEntity
 
-@Database(entities = [GoodEntity::class], version = 2, exportSchema = false)
+@Database(entities = [GoodEntity::class], version = 3, exportSchema = false)
 abstract class SkladDatabase: RoomDatabase()  {
 
     abstract val goodsDao: GoodsDao

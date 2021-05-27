@@ -1,6 +1,9 @@
 package com.example.sklad_8.data.db.entities
 
+
+import android.graphics.Bitmap
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
@@ -17,5 +20,8 @@ data class GoodEntity(
     @SerializedName("article_number")
     val vendorCode: String,
     val imgMain: String,
-    val deletionMark: Boolean
-)
+    val deletionMark: Boolean,
+){
+    @Ignore
+    var btmImg: Bitmap? = null
+}

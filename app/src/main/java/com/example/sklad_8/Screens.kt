@@ -1,5 +1,6 @@
 package com.example.sklad_8
 
+import com.example.sklad_8.ui.goods.DetailGoodFragment
 import com.example.sklad_8.ui.goods.GoodsFragment
 import com.example.sklad_8.ui.settings.SettingsFragment
 import com.example.sklad_8.ui.sync.SyncFragment
@@ -12,6 +13,11 @@ object Screens {
     @Parcelize
     class GoodsScreen(private val tabId: Int, private val i: Int) : AppScreen("${tabId}:$i") {
         override fun create() = GoodsFragment.create(tabId, i)
+    }
+
+    @Parcelize
+    class DetailGoodScreen(private val uuid: String) : AppScreen(uuid) {
+        override fun create() = DetailGoodFragment.create(uuid)
     }
 
     @Parcelize
