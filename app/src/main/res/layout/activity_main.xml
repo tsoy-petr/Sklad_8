@@ -21,9 +21,11 @@
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible"/>
 
         <TextView
+            android:visibility="visible"
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

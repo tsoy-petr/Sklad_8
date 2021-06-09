@@ -33,7 +33,7 @@ class SyncFragment : Fragment(R.layout.fragment_sync) {
         tvSync = view.findViewById(R.id.tv_sync)
         button = view.findViewById(R.id.button)
 
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenStarted {
             syncViewModel.uiState.collect {
                 tvSync.text = it.message
             }

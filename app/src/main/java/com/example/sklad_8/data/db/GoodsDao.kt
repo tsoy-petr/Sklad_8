@@ -2,6 +2,7 @@ package com.example.sklad_8.data.db
 
 import androidx.room.*
 import com.example.sklad_8.data.db.entities.GoodEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GoodsDao {
@@ -32,5 +33,14 @@ interface GoodsDao {
 
     @Query("SELECT * FROM goods_table WHERE parent = :uuidParent")
     fun getGoods(uuidParent: String): List<GoodEntity>
+
+    @Query("SELECT * FROM goods_table WHERE parent = :uuidParent")
+    fun getGoodsFlow(uuidParent: String): Flow<List<GoodEntity>>
+
+    @Query("SELECT COUNT(id) from goods_table")
+    fun getCountGoods() : Long
+
+    @Query("DELETE FROM goods_table")
+    fun deleteAllGoods()
 
 }

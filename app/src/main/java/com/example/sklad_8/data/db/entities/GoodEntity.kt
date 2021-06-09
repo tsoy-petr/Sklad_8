@@ -19,7 +19,6 @@ data class GoodEntity(
     val name: String,
     @SerializedName("article_number")
     val vendorCode: String,
-    val imgMain: String,
     val deletionMark: Boolean,
 ){
     @Ignore

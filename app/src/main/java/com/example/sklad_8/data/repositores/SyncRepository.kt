@@ -1,8 +1,7 @@
 package com.example.sklad_8.data.repositores
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.util.Base64
+import android.util.Log
 import com.example.sklad_8.data.db.SkladDatabase
 import com.example.sklad_8.data.db.entities.GoodEntity
 import com.example.sklad_8.data.db.entities.MessageSync
@@ -12,10 +11,10 @@ import com.example.sklad_8.data.network.SafeApiRequest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import android.graphics.BitmapFactory
-import android.graphics.Bitmap
-import java.io.IOException
-
+import com.example.sklad_8.data.db.entities.ImgGoodEntity
+import com.example.sklad_8.data.repositores.data.ResultGoods
+import com.example.sklad_8.util.Base64Util.toBase64AsByteArray
+import timber.log.Timber
 
 class SyncRepository(
     private val api: ApiService,
@@ -49,7 +48,7 @@ class SyncRepository(
 
                                 send(
                                     MessageSync(
-                                        title = "Загрузка порции товаров (${part.numberPortion})",
+                                        title = "Загрузка порции товаров (${part.numberPortion} из ${it.portions.size})",
                                         type = TypeMessage.LOADING
                                     )
                                 )
@@ -66,33 +65,14 @@ class SyncRepository(
                                 if (!goods.errors.exist) {
                                     goods.result.forEach { good ->
 
-                                        var path = ""
-                                        if (good.img.isNotEmpty()) {
-                                            val decodeValue: ByteArray =
-                                                Base64.decode(good.img, Base64.DEFAULT)
+                                        saveGoodEntity(good)
+                                        savePhoto(good, isMain = true)
+                                        saveBarcodes(good)
+                                        saveFeatures(good)
 
-                                            val bitmap = BitmapFactory.decodeByteArray(
-                                                decodeValue,
-                                                0,
-                                                decodeValue.size
-                                            )
-                                            path = savePhotoToInternalStorage(good.imgName, bitmap)
-                                        }
-
-                                        val goodEntity = GoodEntity(
-                                            id = good.id,
-                                            parent = good.parentId,
-                                            isGroup = good.isGroup,
-                                            name = good.name,
-                                            vendorCode = good.vendorCode,
-                                            imgMain = path,
-                                            deletionMark = good.deletionMark
-                                        )
-
-                                        db.goodsDao.saveGood(goodEntity)
                                         send(
                                             MessageSync(
-                                                title = "Загружен: ${goodEntity.name}",
+                                                title = "Загружен: ${good.name}",
                                                 type = TypeMessage.LOADING
                                             )
                                         )
@@ -119,17 +99,44 @@ class SyncRepository(
         awaitClose()
     }
 
-    private fun savePhotoToInternalStorage(fileName: String, bmp: Bitmap): String {
+    private fun saveBarcodes(good: ResultGoods) {
+        good.barcodes?.forEach {
+           Timber.i(it.toString())
+            db.barcodeDao.saveBarcode(
+                it.copy(
+                    goodId = good.id
+                )
+            )
+        }
+    }
+    private fun saveFeatures(good: ResultGoods) {
+        good.feature?.forEach {
+            db.featureDao.saveFeature(it.copy(goodId = good.id))
+        }
+    }
+    private fun saveGoodEntity(good: ResultGoods) {
+        val goodEntity = GoodEntity(
+            id = good.id,
+            parent = good.parentId,
+            isGroup = good.isGroup,
+            name = good.name,
+            vendorCode = good.vendorCode,
+            deletionMark = good.deletionMark
+        )
+        db.goodsDao.saveGood(goodEntity)
+    }
 
-        return try {
-            context.openFileOutput("$fileName.jpg", MODE_PRIVATE).use { stream ->
-                if (!bmp.compress(Bitmap.CompressFormat.JPEG, 95, stream)) {
-                    throw IOException("Couldn't save bitmap.")
-                }
-            }
-            context.getFileStreamPath(fileName).absolutePath
-        } catch (e: IOException) {
-            ""
+    private fun savePhoto(good: ResultGoods, isMain: Boolean = false) {
+
+        if (good.img.isNotEmpty()) {
+            db.imgGoodDao.saveImgGood(
+                ImgGoodEntity(
+                    id = good.imgName,
+                    goodId = good.id,
+                    isMain = isMain,
+                    imgDigit = good.img.toBase64AsByteArray()
+                )
+            )
         }
     }
 

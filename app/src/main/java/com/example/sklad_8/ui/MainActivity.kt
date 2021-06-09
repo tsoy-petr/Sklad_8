@@ -1,5 +1,6 @@
 package com.example.sklad_8
 
+import android.animation.Animator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,6 +24,13 @@ import com.mikepenz.materialdrawer.iconics.iconicsIcon
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.nameText
 import com.mikepenz.materialdrawer.util.addItems
+import android.view.animation.DecelerateInterpolator
+
+import android.view.animation.AccelerateInterpolator
+
+import android.widget.FrameLayout
+import org.koin.core.component.getScopeName
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -58,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 } else {
-                    binding.root.closeDrawer(binding.slider, true)
+//                    binding.root.closeDrawer(binding.slider, true)
                     binding.root.setDrawerLockMode(
                         DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
                         GravityCompat.START
@@ -117,12 +125,18 @@ class MainActivity : AppCompatActivity() {
                 val tab = drawerItem.identifier.toInt()
                 when (tab) {
                     0 -> {
+                        binding.toolbar.title = "Номенклатура"
+                        showToolbar()
                         modo.selectStack(tab)
                     }
                     1 -> {
+                        binding.toolbar.title = "Синхронизация данных"
+                        showToolbar()
                         modo.selectStack(tab)
                     }
                     2 -> {
+                        binding.toolbar.title = "Настройки"
+                        hideToolbar()
                         modo.externalForward(Screens.SettingScreen())
                     }
                 }
@@ -153,6 +167,41 @@ class MainActivity : AppCompatActivity() {
         if (binding.root.isDrawerOpen(binding.slider)) {
             binding.root.closeDrawer(binding.slider)
         } else modo.back()
+    }
+
+    private fun hideToolbar() {
+        binding.toolbar.animate().translationY((-binding.toolbar.height).toFloat()).setListener(
+            object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {}
+                override fun onAnimationEnd(animation: Animator?) {
+                    binding.toolbar.visibility = View.GONE
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator?) {}
+            }
+        )
+            .interpolator = AccelerateInterpolator(2F)
+//        val lp = mFabButton.getLayoutParams() as FrameLayout.LayoutParams
+//        val fabBottomMargin = lp.bottomMargin
+//        mFabButton.animate().translationY(mFabButton.getHeight() + fabBottomMargin)
+//            .setInterpolator(AccelerateInterpolator(2)).start()
+    }
+
+    private fun showToolbar() {
+
+        if (binding.toolbar.visibility == View.VISIBLE) return
+        binding.toolbar.animate().translationY(0F).setListener(
+            object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {
+                    binding.toolbar.visibility = View.VISIBLE
+                }
+                override fun onAnimationEnd(animation: Animator?) {}
+                override fun onAnimationCancel(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator?) {}
+            }
+        ).interpolator = DecelerateInterpolator(2F)
+//        mFabButton.animate().translationY(0).setInterpolator(DecelerateInterpolator(2)).start()
     }
 
 }

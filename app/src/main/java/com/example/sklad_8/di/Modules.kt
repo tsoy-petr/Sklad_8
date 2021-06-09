@@ -9,12 +9,14 @@ import com.example.sklad_8.data.network.AuthenticationInterceptor
 import com.example.sklad_8.data.network.HostSelectionInterceptor
 import com.example.sklad_8.data.network.NetworkConnectionInterceptor
 import com.example.sklad_8.data.prefs.SharedPrefsManager
+import com.example.sklad_8.data.repositores.CommonSettingsRepository
 import com.example.sklad_8.data.repositores.GoodsRepository
 import com.example.sklad_8.data.repositores.SettingsRepository
 import com.example.sklad_8.data.repositores.SyncRepository
 import com.example.sklad_8.ui.goods.DetailGoodViewModel
 import com.example.sklad_8.ui.goods.GoodsViewModel
 import com.example.sklad_8.ui.settings.ServerSettingsViewModel
+import com.example.sklad_8.ui.settings.common.CommonSettingsViewModel
 import com.example.sklad_8.ui.sync.SyncViewModel
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -54,9 +56,16 @@ val applicationModule = module {
         SkladDatabase.getInstance(androidContext())
     }
 
-    single { SyncRepository(api = get(named(RETROFIT_TAG)), db = get(), context = androidContext()) }
+    single {
+        SyncRepository(
+            api = get(named(RETROFIT_TAG)),
+            db = get(),
+            context = androidContext()
+        )
+    }
     single { GoodsRepository(db = get(), context = androidContext()) }
     single { SettingsRepository(prefs = get()) }
+    single { CommonSettingsRepository(db = get()) }
 }
 
 val networkModule = module {
@@ -92,7 +101,20 @@ val networkModule = module {
 
     single(named(RETROFIT_TAG)) {
         val okkHttpclient = OkHttpClient.Builder()
-            .addInterceptor(AuthenticationInterceptor(get()))
+            .addInterceptor(AuthenticationInterceptor(get())).apply {
+                if (BuildConfig.DEBUG) {
+                    val loggingInterceptor =
+                        HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message ->
+                            Timber.i(message)
+                        })
+                    loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+                    addInterceptor(loggingInterceptor)
+                }
+            }
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .addNetworkInterceptor(get(named(LOGIN_INTERCEPTOR_TAG)) as HttpLoggingInterceptor)
             .build()
 
         Retrofit.Builder()
@@ -106,9 +128,9 @@ val networkModule = module {
 }
 
 val viewModelModule = module {
-
     viewModel { SyncViewModel(repository = get()) }
     viewModel { GoodsViewModel(goodsRepository = get()) }
     viewModel { ServerSettingsViewModel(repository = get()) }
     viewModel { DetailGoodViewModel(repository = get()) }
+    viewModel { CommonSettingsViewModel(repository = get()) }
 }

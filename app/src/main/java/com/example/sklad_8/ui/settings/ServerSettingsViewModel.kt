@@ -1,13 +1,11 @@
 package com.example.sklad_8.ui.settings
 
 import androidx.lifecycle.ViewModel
-import com.example.sklad_8.data.db.entities.GoodEntity
+import androidx.lifecycle.viewModelScope
 import com.example.sklad_8.data.repositores.SettingsRepository
-import com.example.sklad_8.ui.goods.FetchStatus
-import com.example.sklad_8.ui.goods.GoodViewData
-import com.example.sklad_8.ui.goods.GoodsViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class ServerSettingsViewModel(
     private val repository: SettingsRepository
@@ -24,7 +22,9 @@ class ServerSettingsViewModel(
     }
 
     private fun getDataServer() {
-        _uiSate.value = repository.getDataServer()
+        viewModelScope.launch {
+            _uiSate.value = repository.getDataServer()
+        }
     }
 
     fun saveServerAddress(address: String) {

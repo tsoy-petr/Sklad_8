@@ -1,6 +1,7 @@
 package com.example.sklad_8
 
 import android.app.Application
+import android.util.Log
 import com.example.sklad_8.di.applicationModule
 import com.example.sklad_8.di.networkModule
 import com.example.sklad_8.di.viewModelModule
@@ -14,8 +15,7 @@ import org.koin.core.context.startKoin
 import timber.log.Timber.DebugTree
 
 import timber.log.Timber
-
-
+import java.lang.Exception
 
 
 class App : Application() {
@@ -23,6 +23,10 @@ class App : Application() {
     override fun onCreate() {
         modo = Modo(LogReducer(AppReducer(this, MultiReducer())))
         super.onCreate()
+
+        INSTANCE = this
+
+        Timber.plant(if (BuildConfig.DEBUG) DebugTree() else CrashReportingTree())
 
         Timber.plant(DebugTree())
 
@@ -40,9 +44,24 @@ class App : Application() {
     }
 
     companion object {
+        lateinit var INSTANCE: App
+            private set
         lateinit var modo: Modo
             private set
     }
 
+    private class CrashReportingTree : Timber.Tree() {
+        override fun log(priority: Int, tag: String?, message: String, throwable: Throwable?) {
+            if (priority == Log.VERBOSE || priority == Log.DEBUG) {
+                return
+            }
+            val t = throwable ?: Exception(message)
+        }
 
+        companion object {
+            private const val CRASHLYTICS_KEY_PRIORITY = "priority"
+            private const val CRASHLYTICS_KEY_TAG = "tag"
+            private const val CRASHLYTICS_KEY_MESSAGE = "message"
+        }
+    }
 }

@@ -5,11 +5,22 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.sklad_8.data.db.entities.GoodEntity
+import com.example.sklad_8.data.db.entities.ImgGoodEntity
+import com.example.sklad_8.data.repositores.data.BarcodeEntity
+import com.example.sklad_8.data.repositores.data.FeatureEntity
 
-@Database(entities = [GoodEntity::class], version = 3, exportSchema = false)
-abstract class SkladDatabase: RoomDatabase()  {
+@Database(
+    entities = [GoodEntity::class,
+        ImgGoodEntity::class,
+        BarcodeEntity::class,
+        FeatureEntity::class], version = 8, exportSchema = false
+)
+abstract class SkladDatabase : RoomDatabase() {
 
     abstract val goodsDao: GoodsDao
+    abstract val imgGoodDao: ImgGoodDao
+    abstract val barcodeDao: BarcodeDao
+    abstract val featureDao: FeatureDao
 
     companion object {
         @Volatile

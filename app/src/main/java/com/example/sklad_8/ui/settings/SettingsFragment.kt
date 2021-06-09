@@ -34,6 +34,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 1 -> {
                     "Настройки сканера"
                 }
+                2 ->{
+                    "Общие настройки"
+                }
                 else -> {
                     "ERROR"
                 }

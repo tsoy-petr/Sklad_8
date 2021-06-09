@@ -29,7 +29,6 @@ class SyncViewModel(
 
         dataJob = viewModelScope.launch(Dispatchers.IO) {
 
-
             update {
                 copy(
                     status = SyncFetchStatus.Loading,

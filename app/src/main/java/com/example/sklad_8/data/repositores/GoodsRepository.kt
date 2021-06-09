@@ -11,8 +11,8 @@ import java.io.File
 import android.graphics.BitmapFactory
 
 import android.graphics.Bitmap
-
-
+import android.util.Base64
+import kotlinx.coroutines.flow.Flow
 
 
 class GoodsRepository(
@@ -45,7 +45,7 @@ class GoodsRepository(
 
     private fun findAllParents(currentGood: GoodViewData, allParents: MutableList<GoodViewData>) {
         if (currentGood.parent.isEmpty()) return
-        val currentParent = fetchGoodParentByUUID(currentGood.parent)
+        val currentParent = fetchGoodByUUID(currentGood.parent)
         if (currentParent == null) {
             return
         } else {
@@ -55,20 +55,17 @@ class GoodsRepository(
         }
     }
 
-
-    fun fetchGoodParentByUUID(uuidParent: String, withImage: Boolean = false): GoodEntity? {
-        val good = db.goodsDao.getGood(uuidParent)
-        good?.let {
-            if (withImage && good.imgMain.isNotEmpty() == true) {
-                val options = BitmapFactory.Options()
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888
-                val bitmap = BitmapFactory.decodeFile(good.imgMain, options)
-                good.btmImg = bitmap
-                return good
-            }
-        }
-        return good
+    fun fetchGoodByUUID(uuidParent: String): GoodEntity? {
+        return db.goodsDao.getGood(uuidParent)
     }
 
+    fun fetchImgMainGood(uuidGood: String): Bitmap? {
+        val imgGood = db.imgGoodDao.getMainImgGood(uuidGood) ?: return null
+        val encodeValue = imgGood.imgDigit ?: return null
+        return BitmapFactory.decodeByteArray(encodeValue, 0, encodeValue.size)
+    }
+
+    fun fetchBarcodes(uuidGood: String) =
+        db.barcodeDao.barcodesByGoodId(uuidGood)
 
 }

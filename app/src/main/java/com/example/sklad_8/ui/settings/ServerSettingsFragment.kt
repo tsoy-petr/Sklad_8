@@ -10,6 +10,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.sklad_8.R
 import com.example.sklad_8.databinding.FragmentServerSettingsBinding
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.*
 import timber.log.Timber
 
@@ -22,7 +23,11 @@ class ServerSettingsFragment : Fragment(R.layout.fragment_server_settings) {
         object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) { viewModel.saveServerAddress(s.toString()) }
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    viewModel.saveServerAddress(s.toString())
+                }
+            }
         }
     }
 
@@ -30,7 +35,11 @@ class ServerSettingsFragment : Fragment(R.layout.fragment_server_settings) {
         object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) { viewModel.saveServerLogin(s.toString()) }
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    viewModel.saveServerLogin(s.toString())
+                }
+            }
         }
     }
 
@@ -38,7 +47,9 @@ class ServerSettingsFragment : Fragment(R.layout.fragment_server_settings) {
         object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) { viewModel.saveServerPass(s.toString()) }
+            override fun afterTextChanged(s: Editable?) {
+                s?.let { viewModel.saveServerPass(s.toString()) }
+            }
         }
     }
 
@@ -49,7 +60,7 @@ class ServerSettingsFragment : Fragment(R.layout.fragment_server_settings) {
         binding.etServerLogin.addTextChangedListener(textWatcherServerLogin)
         binding.etServerPass.addTextChangedListener(textWatcherServerPass)
 
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenStarted {
             viewModel.uiState.collect {
                 binding.etServerAddress.setText(it.serverAddress)
                 binding.etServerLogin.setText(it.loginServer)
