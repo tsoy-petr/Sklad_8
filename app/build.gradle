@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
 }
@@ -60,11 +59,14 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
 
     //koin
-    implementation "io.insert-koin:koin-core:3.0.2"
+    def koin_version = "3.1.0"
+    implementation "io.insert-koin:koin-core:$koin_version"
 // Koin main features for Android (Scope,ViewModel ...)
-    implementation "io.insert-koin:koin-android:3.0.2"
+    implementation "io.insert-koin:koin-android:$koin_version"
 // Koin Android - experimental builder extensions
-    implementation "io.insert-koin:koin-android-ext:3.0.2"
+//    implementation "io.insert-koin:koin-android-ext:$koin_version"
+// Koin for Jetpack WorkManager
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
 
     //Log
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -113,7 +115,7 @@ dependencies {
     implementation('com.journeyapps:zxing-android-embedded:4.2.0') { transitive = false }
     implementation 'com.google.zxing:core:3.4.0'
 
-    def work_version = "2.6.0-beta01"
+    def work_version = "2.5.0"
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
 }

@@ -13,7 +13,7 @@ import com.example.sklad_8.data.repositores.data.FeatureEntity
     entities = [GoodEntity::class,
         ImgGoodEntity::class,
         BarcodeEntity::class,
-        FeatureEntity::class], version = 8, exportSchema = false
+        FeatureEntity::class], version = 9, exportSchema = false
 )
 abstract class SkladDatabase : RoomDatabase() {
 

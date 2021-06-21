@@ -2,17 +2,13 @@ package com.example.sklad_8.ui.settings.common
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.sklad_8.R
 import com.example.sklad_8.databinding.FragmentCommonSettingsBinding
-import com.example.sklad_8.databinding.FragmentDetailGoodBinding
 import com.example.sklad_8.ui.common.FetchStatus
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.bind
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CommonSettingsFragment : Fragment(R.layout.fragment_common_settings) {

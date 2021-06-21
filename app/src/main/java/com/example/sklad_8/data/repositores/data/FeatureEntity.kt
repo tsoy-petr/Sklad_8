@@ -1,5 +1,6 @@
 package com.example.sklad_8.data.repositores.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -18,6 +19,7 @@ import com.example.sklad_8.data.repositores.data.FeatureEntity.Companion.TABLE_N
 data class FeatureEntity(
     @PrimaryKey
     val id: String,
+    @ColumnInfo(index = true)
     val goodId: String,
     val name: String
 ) {

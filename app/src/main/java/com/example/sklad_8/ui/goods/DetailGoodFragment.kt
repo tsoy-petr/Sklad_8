@@ -43,6 +43,21 @@ class DetailGoodFragment : Fragment(R.layout.fragment_detail_good) {
                         binding.txtTitle.text = viewState.title
                         binding.imageView.setImageBitmap(viewState.btm)
                         barcodeAdapter.submitList(viewState.barcodes)
+
+                    }
+                }
+                when(viewState.repostStatus) {
+                    is FetchStatus.Success -> {
+                        binding.wvReport.visibility = View.VISIBLE
+                        binding.wvReport.loadDataWithBaseURL(
+                            null, viewState.htmlString,
+                            "text/html",
+                            "utf-8",
+                            null
+                        )
+                    }
+                    else -> {
+                        binding.wvReport.visibility = View.GONE
                     }
                 }
             }

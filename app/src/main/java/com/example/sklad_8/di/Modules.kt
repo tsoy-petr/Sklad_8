@@ -2,6 +2,7 @@ package com.example.sklad_8.di
 
 import android.content.Context
 import android.util.Log
+import androidx.work.WorkerParameters
 import com.example.sklad_8.BuildConfig
 import com.example.sklad_8.data.db.SkladDatabase
 import com.example.sklad_8.data.network.ApiService
@@ -9,10 +10,8 @@ import com.example.sklad_8.data.network.AuthenticationInterceptor
 import com.example.sklad_8.data.network.HostSelectionInterceptor
 import com.example.sklad_8.data.network.NetworkConnectionInterceptor
 import com.example.sklad_8.data.prefs.SharedPrefsManager
-import com.example.sklad_8.data.repositores.CommonSettingsRepository
-import com.example.sklad_8.data.repositores.GoodsRepository
-import com.example.sklad_8.data.repositores.SettingsRepository
-import com.example.sklad_8.data.repositores.SyncRepository
+import com.example.sklad_8.data.repositores.*
+import com.example.sklad_8.data.worker.SyncWorker
 import com.example.sklad_8.ui.goods.DetailGoodViewModel
 import com.example.sklad_8.ui.goods.GoodsViewModel
 import com.example.sklad_8.ui.settings.ServerSettingsViewModel
@@ -27,6 +26,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -63,9 +63,31 @@ val applicationModule = module {
             context = androidContext()
         )
     }
-    single { GoodsRepository(db = get(), context = androidContext()) }
+    single {
+        GoodsRepository(
+            db = get(),
+            context = androidContext(),
+            api = get(named(RETROFIT_TAG))
+        )
+    }
     single { SettingsRepository(prefs = get()) }
     single { CommonSettingsRepository(db = get()) }
+    single {
+        SyncWorkRepository(
+            api = get(named(RETROFIT_TAG)),
+            db = get(),
+        )
+    }
+}
+
+val workModule = module {
+    worker { (workerParams: WorkerParameters) ->
+        SyncWorker(
+            repository = get(),
+            ctx = androidContext(),
+            params = workerParams
+        )
+    }
 }
 
 val networkModule = module {
@@ -134,3 +156,4 @@ val viewModelModule = module {
     viewModel { DetailGoodViewModel(repository = get()) }
     viewModel { CommonSettingsViewModel(repository = get()) }
 }
+

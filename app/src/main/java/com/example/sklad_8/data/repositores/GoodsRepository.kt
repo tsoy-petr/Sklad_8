@@ -12,10 +12,12 @@ import android.graphics.BitmapFactory
 
 import android.graphics.Bitmap
 import android.util.Base64
+import com.example.sklad_8.data.network.ApiService
 import kotlinx.coroutines.flow.Flow
 
 
 class GoodsRepository(
+    private val api: ApiService,
     private val context: Context,
     private val db: SkladDatabase
 ) : SafeApiRequest() {
@@ -68,4 +70,15 @@ class GoodsRepository(
     fun fetchBarcodes(uuidGood: String) =
         db.barcodeDao.barcodesByGoodId(uuidGood)
 
+    suspend fun fetchReport(goodId: String) : String {
+        return try {
+            val report = apiRequest {
+                api.getReportByGoods("getReportByGood", goodId)
+            }
+           report.result
+        } catch (e: Exception) {
+            ""
+        }
+
+    }
 }

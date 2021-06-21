@@ -82,18 +82,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        supportActionBar?.setHomeButtonEnabled(false)
+//        supportActionBar?.title = "Складской учет"
+
         initSlider()
         binding.slider.setSavedInstance(savedInstanceState)
 
-        modo.init(savedInstanceState, Screens.MultiStack())
+        if (modo.state.chain.isEmpty()) {
+            modo.init(savedInstanceState, Screens.MultiStack())
+        }
     }
 
     private fun initSlider() {
-
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(false)
-        supportActionBar?.title = "Складской учет"
 
         actionBarDrawerToggle = ActionBarDrawerToggle(
             this,
@@ -196,6 +198,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onAnimationStart(animation: Animator?) {
                     binding.toolbar.visibility = View.VISIBLE
                 }
+
                 override fun onAnimationEnd(animation: Animator?) {}
                 override fun onAnimationCancel(animation: Animator?) {}
                 override fun onAnimationRepeat(animation: Animator?) {}
