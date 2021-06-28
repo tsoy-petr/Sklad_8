@@ -18,6 +18,7 @@ import androidx.room.PrimaryKey
 data class ImgGoodEntity(
     @PrimaryKey
     val id: String,
+    @ColumnInfo(index = true)
     val goodId: String,
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     val imgDigit: ByteArray? = null,

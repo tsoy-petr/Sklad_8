@@ -1,19 +1,16 @@
 package com.example.sklad_8.ui.util
 
-import android.util.DisplayMetrics
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
+import android.Manifest
+import android.content.Context
+import android.os.Build
+import pub.devrel.easypermissions.EasyPermissions
 
-fun RecyclerView.smoothSnapToPosition(position: Int, snapMode: Int = LinearSmoothScroller.SNAP_TO_START, scrollDuration:Float = 0f) {
+object Utils {
 
-    val smoothScroller = object : LinearSmoothScroller(this.context) {
-        override fun getVerticalSnapPreference(): Int = snapMode
-        override fun getHorizontalSnapPreference(): Int = snapMode
-        override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
-//            return scrollDuration / computeVerticalScrollRange()
-            return scrollDuration / computeHorizontalScrollRange()
-        }
-    }
-    smoothScroller.targetPosition = position
-    layoutManager?.startSmoothScroll(smoothScroller)
+    fun hasBluetoothPermissions(context: Context) =
+            EasyPermissions.hasPermissions(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            )
+
 }

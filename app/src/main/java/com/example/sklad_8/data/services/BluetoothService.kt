@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
@@ -20,14 +19,12 @@ import com.example.sklad_8.App
 import com.example.sklad_8.MainActivity
 import com.example.sklad_8.R
 import com.example.sklad_8.data.Constants
-import com.example.sklad_8.data.Constants.BROADCAST_ACTION
 import com.example.sklad_8.data.prefs.SharedPrefsManager
+import com.example.sklad_8.ui.util.Utils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import timber.log.Timber
 import java.io.IOException
 
 class BluetoothService : LifecycleService() {
@@ -42,7 +39,6 @@ class BluetoothService : LifecycleService() {
 
     companion object {
         val isScanning = MutableLiveData<Boolean>()
-        val scanningData = MutableLiveData<ScanningData>()
         private val _scanningEvent = MutableStateFlow(
             ScanningData(state = ScanningState.Empty)
         )
@@ -61,7 +57,7 @@ class BluetoothService : LifecycleService() {
             try {
                 it.close()
             } catch (e: Exception) {
-                Log.i("happy", e.toString())
+                Timber.i(e.toString())
             }
         }
         scanningJob?.cancel()
@@ -76,57 +72,16 @@ class BluetoothService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-
         curNotificationBuilder = provideBaseNotificationBuilder()
-
         postInitialValues()
-
-//        scanningData.observe(this, {
-//            it?.let { updateBroadCast(it) }
-//        })
-        GlobalScope.launch {
-            _scanningEvent.collect {
-                updateBroadCast(it)
-            }
-        }
-    }
-
-    private fun updateBroadCast(scanningData: ScanningData) {
-
-        val intent = Intent(BROADCAST_ACTION)
-
-        val data =
-            when (scanningData.state) {
-                is ScanningState.Empty -> {
-                    BroadcastData()
-                }
-                is ScanningState.Error -> {
-                    BroadcastData(
-                        isError = true, error = scanningData.state.message
-                    )
-                }
-                is ScanningState.Barcode -> {
-                    BroadcastData(barcode = scanningData.state.data)
-                }
-                is ScanningState.HasNotBluetoothPermissions -> {
-                    BroadcastData(settingsNotMade = true)
-                }
-                is ScanningState.ScanningClose -> {
-                    BroadcastData(disconnection = true)
-                }
-                is ScanningState.ShowSettingFragment -> {
-                    BroadcastData(settingsNotMade = true)
-                }
-                is ScanningState.NewConnection -> {
-                    BroadcastData(isConnected = true)
-                }
-            }
-        val json = Json.encodeToString(data)
-        intent.putExtra("dataScanning", json)
-        sendBroadcast(intent)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        if(!Utils.hasBluetoothPermissions(applicationContext)) {
+            updateEvent(ScanningState.HasNotBluetoothPermissions)
+            killService()
+        }
 
         intent?.let {
             when (it.action) {
@@ -167,7 +122,6 @@ class BluetoothService : LifecycleService() {
     private fun startScanning() {
 
         if (btSocket?.isConnected == true) {
-//            scanningData.postValue(ScanningData.NewConnection)
             _scanningEvent.value = ScanningData(ScanningState.NewConnection)
             return
         }
@@ -186,7 +140,6 @@ class BluetoothService : LifecycleService() {
                         device.createRfcommSocketToServiceRecord(Constants.SOCKET_UUID)
                     } catch (e: IOException) {
                         isScanning.postValue(false)
-//                        scanningData.postValue(ScanningData.Error(e.message.toString()))
                         updateEvent(ScanningState.Error(e.message.toString()))
                         null
                     }
@@ -195,18 +148,15 @@ class BluetoothService : LifecycleService() {
                     btSocket?.apply {
                         try {
                             connect()
-//                            scanningData.postValue(ScanningData.NewConnection)
                             updateEvent(ScanningState.NewConnection)
                             val buffer = ByteArray(1024)
                             while (isScanning.value!!) {
                                 try {
                                     val bytes = inputStream.read(buffer)
                                     val bc = String(buffer, 0, bytes)
-//                                    scanningData.postValue(ScanningData.Barcode(bc))
                                     updateEvent(ScanningState.Barcode(bc))
                                 } catch (e: IOException) {
                                     isScanning.postValue(false)
-//                                    scanningData.postValue(ScanningData.ScanningClose)
                                     updateEvent(ScanningState.ScanningClose)
                                     killService()
                                     break
@@ -216,12 +166,10 @@ class BluetoothService : LifecycleService() {
                             try {
                                 close()
                                 isScanning.postValue(false)
-//                                scanningData.postValue(ScanningData.Error(e.message.toString()))
                                 updateEvent(ScanningState.Error(e.message.toString()))
                                 killService()
                             } catch (e2: IOException) {
                                 isScanning.postValue(false)
-//                                scanningData.postValue(ScanningData.Error(e2.message.toString()))
                                 updateEvent(ScanningState.Error(e2.message.toString()))
                                 killService()
                             }
@@ -230,7 +178,6 @@ class BluetoothService : LifecycleService() {
 
                 }
             } else {
-//                scanningData.postValue(ScanningData.ShowSettingFragment)
                 updateEvent(ScanningState.ShowSettingFragment)
                 killService()
             }
@@ -268,6 +215,10 @@ class BluetoothService : LifecycleService() {
             .setVibrate(null)
             .setDefaults(Notification.DEFAULT_SOUND)
             .setContentIntent(provideMainActivityPendingIntent())
+
+    private fun hasBtPermission() {
+
+    }
 
     private fun updateEvent(scanningState: ScanningState) {
         _scanningEvent.value = ScanningData(scanningState)

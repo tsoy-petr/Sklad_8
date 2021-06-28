@@ -14,6 +14,7 @@ import com.github.terrakok.modo.android.LogReducer
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
+import org.koin.core.KoinExperimentalAPI
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import timber.log.Timber.DebugTree
@@ -24,6 +25,7 @@ import java.lang.Exception
 
 class App : Application(), KoinComponent {
 
+    @OptIn(KoinExperimentalAPI::class)
     override fun onCreate() {
         modo = Modo(LogReducer(AppReducer(this, MultiReducer())))
         super.onCreate()
@@ -63,13 +65,6 @@ class App : Application(), KoinComponent {
             if (priority == Log.VERBOSE || priority == Log.DEBUG) {
                 return
             }
-            val t = throwable ?: Exception(message)
-        }
-
-        companion object {
-            private const val CRASHLYTICS_KEY_PRIORITY = "priority"
-            private const val CRASHLYTICS_KEY_TAG = "tag"
-            private const val CRASHLYTICS_KEY_MESSAGE = "message"
         }
     }
 

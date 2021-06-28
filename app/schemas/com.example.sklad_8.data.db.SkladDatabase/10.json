@@ -1,0 +1,276 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 10,
+    "identityHash": "4d276694427c29a56c1dab7bbfab33d6",
+    "entities": [
+      {
+        "tableName": "goods_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `parent` TEXT NOT NULL, `isGroup` INTEGER NOT NULL, `name` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `deletionMark` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parent",
+            "columnName": "parent",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isGroup",
+            "columnName": "isGroup",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "vendorCode",
+            "columnName": "vendorCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deletionMark",
+            "columnName": "deletionMark",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "img_good",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `goodId` TEXT NOT NULL, `imgDigit` BLOB, `isMain` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`goodId`) REFERENCES `goods_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "goodId",
+            "columnName": "goodId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imgDigit",
+            "columnName": "imgDigit",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isMain",
+            "columnName": "isMain",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_img_good_goodId",
+            "unique": false,
+            "columnNames": [
+              "goodId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_img_good_goodId` ON `${TABLE_NAME}` (`goodId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "goods_table",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "goodId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "barcode_good",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`barcode` TEXT NOT NULL, `goodId` TEXT NOT NULL, `characteristicNomenclatureDescription` TEXT, `characteristicNomenclatureId` TEXT, PRIMARY KEY(`barcode`), FOREIGN KEY(`goodId`) REFERENCES `goods_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "barcode",
+            "columnName": "barcode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "goodId",
+            "columnName": "goodId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "characteristicNomenclatureDescription",
+            "columnName": "characteristicNomenclatureDescription",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "characteristicNomenclatureId",
+            "columnName": "characteristicNomenclatureId",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "barcode"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_barcode_good_goodId",
+            "unique": false,
+            "columnNames": [
+              "goodId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_barcode_good_goodId` ON `${TABLE_NAME}` (`goodId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "goods_table",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "goodId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "feature_good",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `goodId` TEXT NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`goodId`) REFERENCES `goods_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "goodId",
+            "columnName": "goodId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_feature_good_goodId",
+            "unique": false,
+            "columnNames": [
+              "goodId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_feature_good_goodId` ON `${TABLE_NAME}` (`goodId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "goods_table",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "goodId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "goods_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_goods_fts_BEFORE_UPDATE BEFORE UPDATE ON `goods_table` BEGIN DELETE FROM `goods_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_goods_fts_BEFORE_DELETE BEFORE DELETE ON `goods_table` BEGIN DELETE FROM `goods_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_goods_fts_AFTER_UPDATE AFTER UPDATE ON `goods_table` BEGIN INSERT INTO `goods_fts`(`docid`, `id`, `name`) VALUES (NEW.`rowid`, NEW.`id`, NEW.`name`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_goods_fts_AFTER_INSERT AFTER INSERT ON `goods_table` BEGIN INSERT INTO `goods_fts`(`docid`, `id`, `name`) VALUES (NEW.`rowid`, NEW.`id`, NEW.`name`); END"
+        ],
+        "tableName": "goods_fts",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`id` TEXT NOT NULL, `name` TEXT NOT NULL, content=`goods_table`)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4d276694427c29a56c1dab7bbfab33d6')"
+    ]
+  }
+}
