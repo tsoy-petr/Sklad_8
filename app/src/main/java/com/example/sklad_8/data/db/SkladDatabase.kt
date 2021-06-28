@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.sklad_8.data.db.entities.GoodEntity
 import com.example.sklad_8.data.db.entities.ImgGoodEntity
+import com.example.sklad_8.data.fullTextSearch.GoodsFtsEntity
 import com.example.sklad_8.data.repositores.data.BarcodeEntity
 import com.example.sklad_8.data.repositores.data.FeatureEntity
 
@@ -13,7 +14,8 @@ import com.example.sklad_8.data.repositores.data.FeatureEntity
     entities = [GoodEntity::class,
         ImgGoodEntity::class,
         BarcodeEntity::class,
-        FeatureEntity::class], version = 9, exportSchema = false
+        FeatureEntity::class,
+        GoodsFtsEntity::class], version = 10, exportSchema = true
 )
 abstract class SkladDatabase : RoomDatabase() {
 
@@ -21,6 +23,7 @@ abstract class SkladDatabase : RoomDatabase() {
     abstract val imgGoodDao: ImgGoodDao
     abstract val barcodeDao: BarcodeDao
     abstract val featureDao: FeatureDao
+    abstract val searchDao: SearchDao
 
     companion object {
         @Volatile

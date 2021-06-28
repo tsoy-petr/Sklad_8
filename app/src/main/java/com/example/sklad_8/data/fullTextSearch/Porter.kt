@@ -1,4 +1,4 @@
-package com.example.sklad_8.data
+package com.example.sklad_8.data.fullTextSearch
 
 import java.util.regex.Pattern
 

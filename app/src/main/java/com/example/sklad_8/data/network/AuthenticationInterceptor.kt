@@ -12,7 +12,7 @@ class AuthenticationInterceptor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        val authToken = Credentials.basic(prefs.getLogin(), prefs.getPass());
+        val authToken = Credentials.basic(prefs.getLogin(), prefs.getPass())
 
         val original: Request = chain.request()
         val builder: Request.Builder = original.newBuilder()

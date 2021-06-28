@@ -1,27 +1,19 @@
 package com.example.sklad_8.di
 
 import android.content.Context
-import android.util.Log
 import androidx.work.WorkerParameters
 import com.example.sklad_8.BuildConfig
 import com.example.sklad_8.data.db.SkladDatabase
-import com.example.sklad_8.data.network.ApiService
-import com.example.sklad_8.data.network.AuthenticationInterceptor
-import com.example.sklad_8.data.network.HostSelectionInterceptor
-import com.example.sklad_8.data.network.NetworkConnectionInterceptor
+import com.example.sklad_8.data.network.*
 import com.example.sklad_8.data.prefs.SharedPrefsManager
 import com.example.sklad_8.data.repositores.*
 import com.example.sklad_8.data.worker.SyncWorker
 import com.example.sklad_8.ui.goods.DetailGoodViewModel
 import com.example.sklad_8.ui.goods.GoodsViewModel
+import com.example.sklad_8.ui.goods.search.SearchViewModel
 import com.example.sklad_8.ui.settings.ServerSettingsViewModel
 import com.example.sklad_8.ui.settings.common.CommonSettingsViewModel
 import com.example.sklad_8.ui.sync.SyncViewModel
-import com.google.gson.Gson
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
-import okhttp3.Credentials
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -78,6 +70,9 @@ val applicationModule = module {
             db = get(),
         )
     }
+    single { SearchRepository(get()) }
+
+    single { AuthService(get()) }
 }
 
 val workModule = module {
@@ -155,5 +150,6 @@ val viewModelModule = module {
     viewModel { ServerSettingsViewModel(repository = get()) }
     viewModel { DetailGoodViewModel(repository = get()) }
     viewModel { CommonSettingsViewModel(repository = get()) }
+    viewModel { SearchViewModel(searchRepository = get()) }
 }
 

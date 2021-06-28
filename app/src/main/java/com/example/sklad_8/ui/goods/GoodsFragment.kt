@@ -77,7 +77,6 @@ class GoodsFragment : Fragment(R.layout.fragment_goods) {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.goods_menu, menu)
-//        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -112,6 +111,10 @@ class GoodsFragment : Fragment(R.layout.fragment_goods) {
         } else {
             modo.forward(Screens.DetailGoodScreen(good.id))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     companion object {
